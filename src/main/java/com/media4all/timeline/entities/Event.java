@@ -7,6 +7,7 @@ import lombok.*;
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class Event {
 
 	@Id

@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
 	@Id

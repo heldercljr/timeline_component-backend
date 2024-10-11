@@ -3,8 +3,8 @@ package com.media4all.timeline.dtos;
 import lombok.*;
 
 @Data
-@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class EventDTO {
 
 	private String title;
