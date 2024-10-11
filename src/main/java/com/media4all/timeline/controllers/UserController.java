@@ -9,18 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.media4all.timeline.dtos.UserDTO;
-import com.media4all.timeline.entities.User;
 import com.media4all.timeline.services.UserService;
 
 @RestController
 @RequestMapping("/users")
-public class UserController implements IController<UserDTO, User> {
+public class UserController implements IController<UserDTO> {
 
 	@Autowired
 	private UserService userService;
 
 	@PostMapping
-	public ResponseEntity<UserDTO> create(@RequestBody User user) {
+	public ResponseEntity<UserDTO> create(@RequestBody UserDTO user) {
 
 		Optional<UserDTO> newUser = this.userService.create(user);
 
@@ -59,7 +58,7 @@ public class UserController implements IController<UserDTO, User> {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody User user) {
+	public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO user) {
 
 		Optional<UserDTO> updatedUser = this.userService.update(id, user);
 

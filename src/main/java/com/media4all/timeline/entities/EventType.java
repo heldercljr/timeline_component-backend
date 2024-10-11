@@ -8,15 +8,19 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class EventType {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NonNull
 	private String name;
 
+	@NonNull
 	private String description;
 
+	@NonNull
 	private String color;
 }

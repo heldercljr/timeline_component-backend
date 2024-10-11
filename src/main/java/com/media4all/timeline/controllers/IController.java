@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-public interface IController<DTO, E> {
+public interface IController<DTO> {
 
-	ResponseEntity<DTO> create(E entity);
+	ResponseEntity<DTO> create(DTO entity);
 	ResponseEntity<DTO> get(Long id);
 	ResponseEntity<List<DTO>> list();
-	ResponseEntity<DTO> update(Long id, E entity);
+	ResponseEntity<DTO> update(Long id, DTO entity);
 	ResponseEntity<Void> delete(Long id);
 }

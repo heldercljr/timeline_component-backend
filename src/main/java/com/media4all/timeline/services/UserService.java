@@ -12,7 +12,7 @@ import com.media4all.timeline.entities.User;
 import com.media4all.timeline.repositories.UserRepository;
 
 @Service
-public class UserService implements IService<UserDTO, User> {
+public class UserService implements IService<UserDTO> {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -20,15 +20,19 @@ public class UserService implements IService<UserDTO, User> {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	public Optional<UserDTO> create(User user) {
+	public Optional<UserDTO> create(UserDTO userDTO) {
 
-		Optional<User> existingUser = this.userRepository.findByName(user.getName());
+		Optional<User> existingUser = this.userRepository.findByName(userDTO.getName());
 	
 		if (existingUser.isPresent()) {
 			return Optional.empty();
 		} 
 		else {
-			User newUser = this.userRepository.save(user);
+			User newUser = this.userRepository.save(
+				new User(
+					userDTO.getName()
+				)
+			);
 			
 			return Optional.of(modelMapper.map(newUser, UserDTO.class));
 		}
@@ -58,15 +62,15 @@ public class UserService implements IService<UserDTO, User> {
 		}
 	}
 
-	public Optional<UserDTO> update(Long id, User user) {
+	public Optional<UserDTO> update(Long id, UserDTO userDTO) {
 
 		Optional<User> existingUser = this.userRepository.findById(id);
 
 		if (existingUser.isPresent()) {
 			User updatedUser = existingUser.get();
 
-			if (user.getName() != null && !user.getName().isEmpty()) {
-				updatedUser.setName(user.getName());
+			if (userDTO.getName() != null && !userDTO.getName().isEmpty()) {
+				updatedUser.setName(userDTO.getName());
 			}
 
 			this.userRepository.save(updatedUser);
@@ -76,7 +80,6 @@ public class UserService implements IService<UserDTO, User> {
 		else {
 			return Optional.empty();
 		}
-
 	}
 
 	public boolean delete(Long id) {

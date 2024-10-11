@@ -10,27 +10,61 @@ import org.springframework.stereotype.Service;
 import com.media4all.timeline.dtos.EventDTO;
 import com.media4all.timeline.entities.Event;
 import com.media4all.timeline.repositories.EventRepository;
+import com.media4all.timeline.entities.EventType;
+import com.media4all.timeline.repositories.EventTypeRepository;
+import com.media4all.timeline.entities.User;
+import com.media4all.timeline.repositories.UserRepository;
+
 
 @Service
-public class EventService implements IService<EventDTO, Event> {
+public class EventService implements IService<EventDTO> {
 
 	@Autowired
 	private EventRepository eventRepository;
 
 	@Autowired
+	private EventTypeRepository eventTypeRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
 	private ModelMapper modelMapper;
 
-	public Optional<EventDTO> create(Event event) {
+	public Optional<EventDTO> create(EventDTO eventDTO) {
 
-		Optional<Event> existingEvent = this.eventRepository.findByTitle(event.getTitle());
+		Optional<Event> existingEvent = this.eventRepository.findByTitle(eventDTO.getTitle());
 
 		if (existingEvent.isPresent()) {
 			return Optional.empty();
 		}
 		else {
-			Event newEvent = this.eventRepository.save(event);
+			Optional<EventType> eventType = this.eventTypeRepository.findByName(eventDTO.getType());
 
-			return Optional.of(modelMapper.map(newEvent, EventDTO.class));
+			if (eventType.isPresent()) {
+				Optional<User> user = this.userRepository.findByName(eventDTO.getUser());
+
+				if (user.isPresent()) {
+					Event newEvent = this.eventRepository.save(
+						new Event(
+							eventDTO.getTitle(),
+							eventDTO.getDescription(),
+							eventDTO.getTimestamp(),
+							eventType.get(),
+							eventDTO.getIcon(),
+							user.get()
+						)
+					);
+
+					return Optional.of(modelMapper.map(newEvent, EventDTO.class));
+				}
+				else {
+					return Optional.empty();
+				}
+			}
+			else {
+				return Optional.empty();
+			}			
 		}
 	}
 
@@ -58,35 +92,44 @@ public class EventService implements IService<EventDTO, Event> {
 		}
 	}
 
-	public Optional<EventDTO> update(Long id, Event event) {
+	public Optional<EventDTO> update(Long id, EventDTO eventDTO) {
 
 		Optional<Event> existingEvent = this.eventRepository.findById(id);
 
 		if (existingEvent.isPresent()) {
 			Event updatedEvent = existingEvent.get();
 
-			if (event.getTitle() != null && !event.getTitle().isEmpty()) {
-				updatedEvent.setTitle(event.getTitle());
+			if (eventDTO.getTitle() != null && !eventDTO.getTitle().isEmpty()) {
+				updatedEvent.setTitle(eventDTO.getTitle());
 			}
-			if (event.getDescription() != null && !event.getDescription().isEmpty()) {
-				updatedEvent.setDescription(event.getDescription());
+			if (eventDTO.getDescription() != null && !eventDTO.getDescription().isEmpty()) {
+				updatedEvent.setDescription(eventDTO.getDescription());
 			}
-			if (event.getTimestamp() != null) {
-				updatedEvent.setTimestamp(event.getTimestamp());
+			if (eventDTO.getTimestamp() != null) {
+				updatedEvent.setTimestamp(eventDTO.getTimestamp());
 			}
-			if (
-				 event.getType() != null &&
-				!event.getType().getName().isEmpty() &&
-				!event.getType().getDescription().isEmpty() &&
-				!event.getType().getColor().isEmpty()
-			) {
-				updatedEvent.setType(event.getType());
+			if  (eventDTO.getType() != null) {
+				Optional<EventType> eventType = this.eventTypeRepository.findByName(eventDTO.getType());
+
+				if (eventType.isPresent()) {
+					updatedEvent.setType(eventType.get());
+				}
+				else {
+					return Optional.empty();
+				}
 			}
-			if (event.getIcon() != null && !event.getIcon().isEmpty()) {
-				updatedEvent.setIcon(event.getIcon());
+			if (eventDTO.getIcon() != null && !eventDTO.getIcon().isEmpty()) {
+				updatedEvent.setIcon(eventDTO.getIcon());
 			}
-			if (event.getUser() != null && !event.getUser().getName().isEmpty()) {
-				updatedEvent.setUser(event.getUser());
+			if (eventDTO.getUser() != null) {
+				Optional<User> user = this.userRepository.findByName(eventDTO.getUser());
+				
+				if (user.isPresent()) {
+					updatedEvent.setUser(user.get());
+				}
+				else {
+					return Optional.empty();
+				}
 			}
 
 			this.eventRepository.save(updatedEvent);

@@ -9,18 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.media4all.timeline.dtos.EventTypeDTO;
-import com.media4all.timeline.entities.EventType;
 import com.media4all.timeline.services.EventTypeService;
 
 @RestController
 @RequestMapping("/eventtypes")
-public class EventTypeController implements IController<EventTypeDTO, EventType> {
+public class EventTypeController implements IController<EventTypeDTO> {
 
 	@Autowired
 	private EventTypeService eventTypeService;
 
 	@PostMapping
-	public ResponseEntity<EventTypeDTO> create(@RequestBody EventType event) {
+	public ResponseEntity<EventTypeDTO> create(@RequestBody EventTypeDTO event) {
 
 		Optional<EventTypeDTO> newEventType = this.eventTypeService.create(event);
 
@@ -59,7 +58,7 @@ public class EventTypeController implements IController<EventTypeDTO, EventType>
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<EventTypeDTO> update(@PathVariable Long id, @RequestBody EventType eventType) {
+	public ResponseEntity<EventTypeDTO> update(@PathVariable Long id, @RequestBody EventTypeDTO eventType) {
 
 		Optional<EventTypeDTO> updatedEventType = this.eventTypeService.update(id, eventType);
 

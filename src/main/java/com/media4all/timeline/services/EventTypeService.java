@@ -12,7 +12,7 @@ import com.media4all.timeline.entities.EventType;
 import com.media4all.timeline.repositories.EventTypeRepository;
 
 @Service
-public class EventTypeService implements IService<EventTypeDTO, EventType> {
+public class EventTypeService implements IService<EventTypeDTO> {
 
 	@Autowired
 	private EventTypeRepository eventTypeRepository;
@@ -20,15 +20,21 @@ public class EventTypeService implements IService<EventTypeDTO, EventType> {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	public Optional<EventTypeDTO> create(EventType eventType) {
+	public Optional<EventTypeDTO> create(EventTypeDTO eventTypeDTO) {
 
-		Optional<EventType> existingEventType = this.eventTypeRepository.findByName(eventType.getName());
+		Optional<EventType> existingEventType = this.eventTypeRepository.findByName(eventTypeDTO.getName());
 
 		if (existingEventType.isPresent()) {
 			return Optional.empty();
 		}
 		else {
-			EventType newEventType = this.eventTypeRepository.save(eventType);
+			EventType newEventType = this.eventTypeRepository.save(
+				new EventType(
+					eventTypeDTO.getName(),
+					eventTypeDTO.getDescription(),
+					eventTypeDTO.getColor()
+				)
+			);
 
 			return Optional.of(modelMapper.map(newEventType, EventTypeDTO.class));
 		}
@@ -58,21 +64,21 @@ public class EventTypeService implements IService<EventTypeDTO, EventType> {
 		}
 	}
 
-	public Optional<EventTypeDTO> update(Long id, EventType eventType) {
+	public Optional<EventTypeDTO> update(Long id, EventTypeDTO eventTypeDTO) {
 
 		Optional<EventType> existingEventType = this.eventTypeRepository.findById(id);
 
 		if (existingEventType.isPresent()) {
 			EventType updatedEventType = existingEventType.get();
 
-			if (eventType.getName() != null && !eventType.getName().isEmpty()) {
-				updatedEventType.setName(eventType.getName());
+			if (eventTypeDTO.getName() != null && !eventTypeDTO.getName().isEmpty()) {
+				updatedEventType.setName(eventTypeDTO.getName());
 			}
-			if (eventType.getDescription() != null && !eventType.getDescription().isEmpty()) {
-				updatedEventType.setDescription(eventType.getDescription());
+			if (eventTypeDTO.getDescription() != null && !eventTypeDTO.getDescription().isEmpty()) {
+				updatedEventType.setDescription(eventTypeDTO.getDescription());
 			}
-			if (eventType.getColor() != null && !eventType.getColor().isEmpty()) {
-				updatedEventType.setColor(eventType.getColor());
+			if (eventTypeDTO.getColor() != null && !eventTypeDTO.getColor().isEmpty()) {
+				updatedEventType.setColor(eventTypeDTO.getColor());
 			}
 
 			this.eventTypeRepository.save(updatedEventType);

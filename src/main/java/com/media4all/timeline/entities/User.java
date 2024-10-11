@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 @Entity
 @AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 public class User {
 
@@ -16,6 +17,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NonNull
 	private String name;
 
 	@OneToMany(mappedBy = "user")
