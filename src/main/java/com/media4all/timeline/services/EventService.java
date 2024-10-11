@@ -15,7 +15,6 @@ import com.media4all.timeline.repositories.EventTypeRepository;
 import com.media4all.timeline.entities.User;
 import com.media4all.timeline.repositories.UserRepository;
 
-
 @Service
 public class EventService implements IService<EventDTO> {
 
