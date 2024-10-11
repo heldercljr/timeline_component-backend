@@ -71,7 +71,7 @@ public class EventTypeController implements IController<EventTypeDTO> {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(Long id) {
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 
 		boolean deleted = this.eventTypeService.delete(id);
 
